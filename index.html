@@ -93,6 +93,8 @@
         const minute = document.getElementById('minute');
         const second = document.getElementById('second');
         const canvas = document.getElementById("canvas");
+        let select = 3
+
         //渲染canvas環境
         const context = canvas.getContext("2d");
         let radius = canvas.height / 2;
@@ -102,9 +104,32 @@
         selectNav(3)
 
         $(".period_btn").click(function () {
-            let index = $('.period_btn').index(this)
-            selectNav(index)
-            switch (index) {
+            select = $('.period_btn').index(this)
+            selectNav(select)
+            switch (select) {
+                case 0:
+                    morning()
+                    break
+                case 1:
+                    afternoon()
+                    break
+                case 2:
+                    night()
+                    break
+            }
+            closeNav();
+        });
+
+        const setDate = () => {
+            const now = new Date();
+            let h = now.getHours();
+            let m = now.getMinutes();
+            let s = now.getSeconds();
+            hour.style.transform = `rotate(${h * 30 + 180}deg)`;
+            minute.style.transform = `rotate(${m * 6 + 180}deg)`;
+            second.style.transform = `rotate(${s * 6 + 180}deg)`;
+
+            switch (select) {
                 case 0:
                     morning()
                     break
@@ -115,40 +140,42 @@
                     night()
                     break
                 case 3:
-                    auto(true)
+                    if (h >= 6 && h <= 13) {
+                        morning();
+                    } else if (h >= 14 && h <= 18) {
+                        afternoon();
+                    } else {
+                        night();
+                    }
                     break
             }
-            if (index < 3) auto(false);
-            closeNav();
-        });
 
-        let open = true // 自動設定樣式開關
-        const setDate = () => {
-            const now = new Date();
-            let h = now.getHours();
-            let m = now.getMinutes();
-            let s = now.getSeconds();
-            hour.style.transform = `rotate(${h * 30 + 180}deg)`;
-            minute.style.transform = `rotate(${m * 6 + 180}deg)`;
-            second.style.transform = `rotate(${s * 6 + 180}deg)`;
-            
-            if (open) {
-                if (h >= 6 && h <= 13) {
-                    morning();
-                } else if (h >= 14 && h <= 18) {
-                    afternoon();
-                } else {
-                    night();
+            if (screen.width < 400) {
+                if ($(".time-circle").css("width") !== "350px") {
+                    $(".time-circle").css({"width": "350px", "height": "350px"})
+                    $("#hour").css("height", "80px")
+                    $("#minute").css("height", "120px")
+                    $("#second").css("height", "190px")
+                }
+            } else if (screen.width < 500) {
+                if ($(".time-circle").css("width") !== "400px") {
+                    $(".time-circle").css({"width": "400px", "height": "400px"})
+                    $("#hour").css("height", "100px")
+                    $("#minute").css("height", "140px")
+                    $("#second").css("height", "215px")
+                }
+            } else {
+                if ($(".time-circle").css("width") !== "500px") {
+                    $(".time-circle").css({"width": "500px", "height": "500px"})
+                    $("#hour").css("height", "120px")
+                    $("#minute").css("height", "200px")
+                    $("#second").css("height", "275px")
                 }
             }
         }
         setDate();
         setInterval(setDate, 1000);
 
-        // 自動設定樣式功能
-        function auto(isOn) {
-            open = isOn
-        }
         // 早上
         function morning() {
             $(".content").removeClass("afternoon").removeClass("night");
@@ -162,6 +189,15 @@
             hour.src = "images/morning_hour.png";
             minute.src = "images/morning_minute.png";
             second.src = "images/morning_second.png";
+
+            $(".whale").css("top", "80%")
+            if (screen.width < 400) {
+                $(".ship").css("top", "45%")
+            } else if (screen.width < 500) {
+                $(".ship").css("top", "48%")
+            } else {
+                $(".ship").css("top", "52%")
+            }
         }
         // 下午
         function afternoon() {
@@ -176,6 +212,9 @@
             hour.src = "images/afternoon_hour.png";
             minute.src = "images/afternoon_minute.png";
             second.src = "images/afternoon_second.png";
+
+            $(".whale").css("top", "80%")
+            $(".ship").css("top", "72%")
         }
         // 夜晚
         function night() {
@@ -190,6 +229,15 @@
             hour.src = "images/night_hour.png";
             minute.src = "images/night_minute.png";
             second.src = "images/night_second.png";
+
+            $(".ship").css("top", "72%")
+            if (screen.width < 400) {
+                $(".whale").css("top", "57%")
+            } else if (screen.width < 500) {
+                $(".whale").css("top", "58%")
+            } else {
+                $(".whale").css("top", "60%")
+            }
         }
 
         // 繪製時中刻度
@@ -207,20 +255,34 @@
                 let ang = i * Math.PI / 2;
                 ctx.rotate(ang);
                 // 打印位置到半徑的95％
-                ctx.translate(0, - radius * 0.95);
+                let val = 0.95
+                if (screen.width < 400) {
+                    val = 0.63
+                } else if (screen.width < 500) {
+                    val = 0.7
+                }
+                ctx.translate(0, - radius * val);
                 ctx.rotate(-ang);
                 //印出文字
-                ctx.fillText(num[i].toString(), 0, 0);
+                ctx.fillText(num[i].toString(), 0, 3);
                 ctx.rotate(ang);
-                ctx.translate(0, radius * 0.95);
+                ctx.translate(0, radius * val);
                 ctx.rotate(-ang);
             }
-            ctx.scale(2.1, 2.1);
-            // 大刻度      
-            ctx.lineWidth = 2;
+            
+            if (screen.width < 400) {
+                ctx.scale(1.45, 1.45);
+            } else if (screen.width < 500) {
+                ctx.scale(1.65, 1.65);
+            } else {
+                ctx.scale(2.1, 2.1);
+            }
+            
+            // 大刻度
+            ctx.lineWidth = 3;
             ctx.strokeStyle = color;
             for (let i = 0; i < 12; i++) {
-
+                
                 ctx.beginPath();
                 ctx.rotate(Math.PI / 6);
                 ctx.moveTo(110, 0);
@@ -230,7 +292,7 @@
             }
 
             //小刻度
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
 
             for (i = 0; i < 60; i++) {
                 if (i % 5 != 0) {
