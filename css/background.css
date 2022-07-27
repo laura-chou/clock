@@ -6,8 +6,6 @@ html,body {
 body {
     padding: 0;
     margin: 0;
-    position:fixed;
-    overflow-y:hidden;
 }
 .content {
     height: 100%;
