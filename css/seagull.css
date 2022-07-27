@@ -46,9 +46,9 @@
 
 /* 早上海鷗位置 */
 .morning .seagull{
-    top: 0%;
+    visibility: hidden;
 }
 /* 夜晚海鷗位置 */
 .night .seagull{
-    top: 0%;
+    visibility: hidden;
 }
